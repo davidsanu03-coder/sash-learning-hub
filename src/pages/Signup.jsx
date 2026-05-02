@@ -27,6 +27,11 @@ export default function Signup() {
   };
 
   const signup = async () => {
+    // VALIDATIONS
+    if (!form.firstname || !form.surname || !form.email || !form.password) {
+      return alert("Please fill all required fields");
+    }
+
     if (form.email !== form.email2) {
       return alert("Emails do not match");
     }
@@ -35,26 +40,37 @@ export default function Signup() {
       return alert("Passwords do not match");
     }
 
+    if (form.password.length < 6) {
+      return alert("Password must be at least 6 characters");
+    }
+
     try {
       await API.post("/auth/signup", {
-        name: form.firstname + " " + form.surname,
+        firstName: form.firstname,
+        lastName: form.surname,
+        middleName: form.middlename,
+        username: form.username,
         email: form.email,
         password: form.password,
         role: "student",
         phone: form.phone,
         gender: form.gender,
-        programme: form.programme
+        programme: form.programme,
+        source: form.source,
+        other: form.other
       });
 
       alert("Account created successfully");
       navigate("/login");
 
     } catch (err) {
+      console.log(err);
       alert(err?.response?.data?.message || "Signup failed");
     }
   };
 
-  const boxStyle = {
+  // STYLES
+  const box = {
     border: "1px solid #3b79b7",
     background: "#fff",
     padding: 15,
@@ -64,11 +80,12 @@ export default function Signup() {
   const row = {
     display: "flex",
     alignItems: "center",
-    marginBottom: 10
+    marginBottom: 10,
+    flexWrap: "wrap"
   };
 
   const label = {
-    width: 250
+    width: 220
   };
 
   const input = {
@@ -77,39 +94,29 @@ export default function Signup() {
     border: "1px solid #999"
   };
 
-  const socialBtn = {
-    padding: "8px 12px",
-    background: "#1e4d7b",
-    color: "white",
-    textDecoration: "none",
-    borderRadius: 6,
-    fontSize: 13
-  };
-
   return (
-    <div style={{ fontFamily: "Arial", background: "#f5f5f5" }}>
+    <div style={{ fontFamily: "Arial", background: "#f5f5f5", minHeight: "100vh" }}>
 
       {/* HEADER */}
       <div style={{
         background: "linear-gradient(to right, #1e4d7b, #3b79b7)",
         color: "white",
-        padding: 15
+        padding: 15,
+        display: "flex",
+        alignItems: "center",
+        gap: 10
       }}>
-        <img src={logo} style={{ width: 50 }} />
+        <img src={logo} alt="logo" style={{ width: 50 }} />
         <h2>SASH Learning Hub</h2>
       </div>
 
-      <div style={{ width: "85%", margin: "20px auto" }}>
+      <div style={{ width: "90%", maxWidth: 900, margin: "20px auto" }}>
 
-        <h2>Create a New Account</h2>
-
-        <p>
-          Each candidate must choose a username and password.
-        </p>
+        <h2>Create Account</h2>
 
         {/* PERSONAL DATA */}
-        <div style={boxStyle}>
-          <h3>PERSONAL DATA</h3>
+        <div style={box}>
+          <h3>Personal Data</h3>
 
           <div style={row}>
             <label style={label}>Surname *</label>
@@ -117,7 +124,7 @@ export default function Signup() {
           </div>
 
           <div style={row}>
-            <label style={label}>Firstname *</label>
+            <label style={label}>First Name *</label>
             <input name="firstname" onChange={handleChange} style={input} />
           </div>
 
@@ -132,14 +139,14 @@ export default function Signup() {
           </div>
 
           <div style={row}>
-            <label style={label}>Email again *</label>
+            <label style={label}>Confirm Email *</label>
             <input name="email2" onChange={handleChange} style={input} />
           </div>
         </div>
 
         {/* LOGIN INFO */}
-        <div style={boxStyle}>
-          <h3>LOGIN INFORMATION</h3>
+        <div style={box}>
+          <h3>Login Information</h3>
 
           <div style={row}>
             <label style={label}>Username *</label>
@@ -152,23 +159,19 @@ export default function Signup() {
           </div>
 
           <div style={row}>
-            <label style={label}>Password again *</label>
+            <label style={label}>Confirm Password *</label>
             <input type="password" name="password2" onChange={handleChange} style={input} />
           </div>
-
-          <p style={{ color: "red", textAlign: "center" }}>
-            STORE YOUR LOGIN DETAILS SAFELY
-          </p>
         </div>
 
         {/* PERSONAL INFO */}
-        <div style={boxStyle}>
-          <h3>PERSONAL INFORMATION</h3>
+        <div style={box}>
+          <h3>Personal Information</h3>
 
           <div style={row}>
             <label style={label}>Gender *</label>
             <select name="gender" onChange={handleChange} style={input}>
-              <option value="">Choose</option>
+              <option value="">Select</option>
               <option>Male</option>
               <option>Female</option>
             </select>
@@ -181,14 +184,13 @@ export default function Signup() {
         </div>
 
         {/* PROGRAMME */}
-        <div style={boxStyle}>
-          <h3>PROGRAMME</h3>
+        <div style={box}>
+          <h3>Programme</h3>
 
           <div style={row}>
             <label style={label}>Programme *</label>
             <select name="programme" onChange={handleChange} style={input}>
-              <option value="">Choose</option>
-              <option>Pre-Degree</option>
+              <option value="">Select</option>
               <option>IJMB</option>
               <option>JAMB</option>
               <option>SSCE</option>
@@ -198,21 +200,12 @@ export default function Signup() {
           </div>
         </div>
 
-        {/* AGREEMENT */}
-        <div style={boxStyle}>
-          <h3>AGREEMENT</h3>
-
-          <p>
-            You agree that all information provided is valid and true.
-          </p>
-        </div>
-
         {/* BUTTONS */}
-        <div style={{ textAlign: "center" }}>
+        <div style={{ textAlign: "center", marginTop: 20 }}>
           <button onClick={signup} style={{
-            padding: 10,
+            padding: 12,
             background: "#1e4d7b",
-            color: "white",
+            color: "#fff",
             border: "none",
             width: 200,
             marginRight: 10
@@ -221,40 +214,13 @@ export default function Signup() {
           </button>
 
           <button onClick={() => navigate("/login")} style={{
-            padding: 10,
+            padding: 12,
             background: "#ccc",
             border: "none",
             width: 200
           }}>
             Cancel
           </button>
-        </div>
-
-        {/* SOCIAL MEDIA */}
-        <div style={{ textAlign: "center", marginTop: 30 }}>
-          <p style={{ color: "#1e4d7b", fontWeight: "bold" }}>
-            Follow SASH Learning Hub
-          </p>
-
-          <div style={{ display: "flex", justifyContent: "center", gap: 10, flexWrap: "wrap" }}>
-
-            <a href="https://instagram.com/YOUR_PAGE" target="_blank" rel="noreferrer" style={socialBtn}>
-              📸 Instagram
-            </a>
-
-            <a href="https://facebook.com/YOUR_PAGE" target="_blank" rel="noreferrer" style={socialBtn}>
-              📘 Facebook
-            </a>
-
-            <a href="https://youtube.com/@YOUR_CHANNEL" target="_blank" rel="noreferrer" style={socialBtn}>
-              ▶ YouTube
-            </a>
-
-            <a href="https://x.com/YOUR_HANDLE" target="_blank" rel="noreferrer" style={socialBtn}>
-              🐦 Twitter/X
-            </a>
-
-          </div>
         </div>
 
       </div>

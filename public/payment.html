@@ -1,36 +1,166 @@
-<!DOCTYPE html>
-<html>
+<<!DOCTYPE html>
+<html lang="en">
 <head>
-  <title>Payment</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SASH Learning Hub - Payment Portal</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+    }
+
+    /* HEADER */
+    .header {
+      background: linear-gradient(to right, #1e4d7b, #3b79b7);
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .header p {
+      margin-top: 8px;
+      font-size: 14px;
+    }
+
+    /* MAIN CONTAINER */
+    .container {
+      width: 90%;
+      max-width: 500px;
+      margin: 50px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.08);
+      text-align: center;
+    }
+
+    .container h2 {
+      color: #1e4d7b;
+      margin-bottom: 10px;
+    }
+
+    .amount {
+      font-size: 24px;
+      font-weight: bold;
+      color: #2c7a2c;
+      margin: 20px 0;
+    }
+
+    .info {
+      color: #555;
+      margin-bottom: 25px;
+      line-height: 1.6;
+    }
+
+    .pay-btn {
+      background: #1e4d7b;
+      color: white;
+      border: none;
+      padding: 14px 30px;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .pay-btn:hover {
+      background: #163a5c;
+    }
+
+    .back-btn {
+      display: inline-block;
+      margin-top: 20px;
+      text-decoration: none;
+      color: #1e4d7b;
+      font-weight: bold;
+    }
+
+    .footer {
+      margin-top: 50px;
+      background: #1e4d7b;
+      color: white;
+      text-align: center;
+      padding: 15px;
+    }
+  </style>
 </head>
 <body>
 
-<h2>Pay School Fees</h2>
+  <!-- HEADER -->
+  <div class="header">
+    <h1>SASH Learning Hub</h1>
+    <p>School Fee Payment Portal</p>
+  </div>
 
-<button onclick="payWithPaystack()">Pay Now</button>
+  <!-- PAYMENT CARD -->
+  <div class="container">
+    <h2>Pay School Fees</h2>
 
-<script src="https://js.paystack.co/v1/inline.js"></script>
+    <p class="info">
+      Complete your payment to activate full access to your student dashboard,
+      courses, attendance, and learning resources.
+    </p>
 
-<script>
-function payWithPaystack() {
-  let handler = PaystackPop.setup({
-    key: 'YOUR_PUBLIC_KEY',
-    email: 'student@email.com',
-    amount: 500000, // 50`00 NGN
-    currency: "NGN",
+    <div class="amount">
+      Amount: ₦5,000
+    </div>
 
-    callback: function(response) {
-      alert("Payment successful! Ref: " + response.reference);
-    },
+    <button class="pay-btn" onclick="payWithPaystack()">
+      Pay Now
+    </button>
 
-    onClose: function() {
-      alert("Payment cancelled");
+    <br>
+
+    <a href="dashboard.html" class="back-btn">
+      ← Back to Dashboard
+    </a>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    © 2026 SASH Learning Hub | All Rights Reserved
+  </div>
+
+  <!-- PAYSTACK SCRIPT -->
+  <script src="https://js.paystack.co/v1/inline.js"></script>
+
+  <script>
+    function payWithPaystack() {
+      let handler = PaystackPop.setup({
+        key: 'pk_live_685907fa2255f620c5b82a2c1cb308d9f8ee46a6', 
+        
+
+        email: 'student@email.com',
+
+        amount: 5000, 
+        // ₦5000 in kobo
+
+        currency: "NGN",
+
+        ref: 'SASH_' + new Date().getTime(),
+
+        callback: function(response) {
+          alert("Payment successful! Reference: " + response.reference);
+
+          // Redirect after successful payment
+          window.location.href = "dashboard.html";
+        },
+
+        onClose: function() {
+          alert("Transaction cancelled.");
+        }
+      });
+
+      handler.openIframe();
     }
-  });
-
-  handler.openIframe();
-}
-</script>
+  </script>
 
 </body>
 </html>
